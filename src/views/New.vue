@@ -17,7 +17,7 @@ export default {
     TheNoteDisplay,
   },
   created() {
-    this.$store.dispatch('createNote')
+    this.$store.dispatch('note/initNote')
   },
 }
 </script>

@@ -1,74 +1,40 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import note from './note'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     strict: process.env.NODE_ENV !== 'production',
 
+    modules: {
+        note,
+    },
     state() {
         return {
-            note: null,
+            notelist: [], // item: {id, title}
         }
     },
     getters: {
-        note: state => state.note,
-        noteTitle: (state, getters) => {
-            const note = getters.note
-            if (note) {
-                return note.title
-            }
-        },
-        noteContent: (state, getters) => { // 笔记的markdown格式内容
-            const note = getters.note
-            if (note) {
-                return note.content
-            }
-        },
-        noteCreated: (state, getters) => { // 笔记创建的日期
-            const note = getters.note
-            if (note) {
-                return note.created
-            }
-        },
-        noteNotebook: (state, getters) => {
-            const note = getters.note
-            if (note) {
-                return note.notebook
-            }
-        },
-        noteTags: (state, getters) => {
-            const note = getters.note
-            if (note) {
-                return note.tags
-            }
-        },
+        notelist: (state) => state.notelist,
     },
     mutations: {
-        note(state, value) {
-            state.note = value
+        removeNote(state, { id }) {
+            state.notelist = state.splice(state.notelist.findIndex(note => note.id === id), 1)
         },
-        updateNote(state, value) {
-            Object.assign(state.note, value)
+        addNote(state, { id, title }) {
+            state.notelist.push({
+                id: id,
+                title: title,
+            })
         },
     },
     actions: {
-        clearNote({ commit }) {
-            commit('note', null)
+        removeNote({ commit }, note) {
+            commit('removeNote', note)
         },
-        createNote({ commit }) {
-            const time = Date.now()
-            commit('note', {
-                id: String(time),
-                title: '',
-                content: '',
-                created: time,
-                notebook: null,
-                tags: null,
-            })
+        addNote({ commit }, note) {
+            commit('addNote', note)
         },
-        updateNote({ commit }, note) {
-            commit('updateNote', note)
-        },
-    }
+    },
 })

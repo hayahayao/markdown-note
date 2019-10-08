@@ -43,6 +43,7 @@ body,
 .el-input__inner,
 .el-textarea__inner {
   border: none;
+  padding-left: 0;
 }
 
 /* 自定义title和content显示 */

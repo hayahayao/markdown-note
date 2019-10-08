@@ -1,7 +1,7 @@
 <template>
   <el-col :span="11">
-    <h1 class="my-title">{{ title }}</h1>
     <el-divider></el-divider>
+    <h1 class="my-title">{{ title }}</h1>
     <div class="my-content" v-html="htmlContent"></div>
   </el-col>
 </template>
@@ -12,10 +12,10 @@ import marked from 'marked'
 export default {
   computed: {
     title() {
-      return this.$store.getters.noteTitle
+      return this.$store.getters['note/title']
     },
     htmlContent() {
-      return marked(this.$store.getters.noteContent)
+      return marked(this.$store.getters['note/content'])
     },
   },
 }
