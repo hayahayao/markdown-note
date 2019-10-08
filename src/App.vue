@@ -20,12 +20,30 @@ export default {
 </script>
 
 <style>
+/* 高度调整 */
 html,
 body,
 #app,
-.el-container {
+.el-container,
+.el-row {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+.el-textarea,
+.el-textarea__inner {
+  height: 100%;
+}
+
+/* 输入框边框 */
+.el-input__inner {
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #dcdfe6;
+}
+.el-textarea__inner {
+  height: 100%;
+  border: none;
+  border-radius: 0;
 }
 </style>
