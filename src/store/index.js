@@ -57,7 +57,6 @@ export default new Vuex.Store({
             commit('note', null)
         },
         createNote({ commit }) {
-            // 默认笔记
             const time = Date.now()
             commit('note', {
                 id: String(time),

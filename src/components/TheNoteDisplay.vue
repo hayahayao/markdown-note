@@ -1,5 +1,22 @@
 <template>
   <el-col :span="11">
-    <div>html</div>
+    <h1 class="my-title">{{ title }}</h1>
+    <el-divider></el-divider>
+    <div class="my-content" v-html="htmlContent"></div>
   </el-col>
 </template>
+
+<script>
+import marked from 'marked'
+
+export default {
+  computed: {
+    title() {
+      return this.$store.getters.noteTitle
+    },
+    htmlContent() {
+      return marked(this.$store.getters.noteContent)
+    },
+  },
+}
+</script>

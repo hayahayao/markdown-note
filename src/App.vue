@@ -20,6 +20,10 @@ export default {
 </script>
 
 <style>
+* {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
 /* 高度调整 */
 html,
 body,
@@ -36,14 +40,25 @@ body,
 }
 
 /* 输入框边框 */
-.el-input__inner {
-  border: none;
-  border-radius: 0;
-  border-bottom: 1px solid #dcdfe6;
-}
+.el-input__inner,
 .el-textarea__inner {
-  height: 100%;
   border: none;
-  border-radius: 0;
+}
+
+/* 自定义title和content显示 */
+.my-title,
+.el-input--small .el-input__inner {
+  margin: 0;
+  padding: 0;
+  font-size: 25px;
+  font-weight: bold;
+  height: 30px;
+  line-height: 30px;
+  color: #000000;
+}
+.my-content,
+.el-input--small .el-textarea__inner {
+  margin: 0;
+  padding: 0;
 }
 </style>

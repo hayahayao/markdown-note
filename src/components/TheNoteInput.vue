@@ -1,6 +1,7 @@
 <template>
   <el-col :span="11">
     <el-input placeholder="标题" v-model="title"></el-input>
+    <el-divider></el-divider>
     <el-input type="textarea" v-model="content"></el-input>
   </el-col>
 </template>
