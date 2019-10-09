@@ -1,7 +1,7 @@
 <template>
   <el-col :span="11">
-    <el-divider></el-divider>
     <h1 class="my-title">{{ title }}</h1>
+    <el-divider></el-divider>
     <div class="my-content" v-html="htmlContent"></div>
   </el-col>
 </template>

@@ -6,8 +6,8 @@ export default {
             title: '',
             content: '',
             created: null,
+            favorited: false,
             notebook: null,
-            tags: [],
         }
     },
     getters: {
@@ -15,8 +15,8 @@ export default {
         title: state => state.title,
         content: state => state.content,
         created: state => state.created,
+        favorited: state => state.favorited,
         notebook: state => state.notebook,
-        tags: state => state.notebook,
     },
     mutations: {
         id(state, value) {
@@ -31,11 +31,11 @@ export default {
         created(state, value) {
             state.created = value
         },
+        favorited(state, value) {
+            state.favorited = value
+        },
         notebook(state, value) {
             state.notebook = value
-        },
-        tags(state, value) {
-            state.tags = value
         },
     },
     actions: {
@@ -43,22 +43,20 @@ export default {
             const time = Date.now()
             commit('id', `note: ${String(time)}`)
             commit('created', String(time))
-            commit('title', '')
-            commit('content', '')
         },
-        updateNote({ commit }, { title, content, notebook, tags }) {
+        updateNote({ commit }, { title, content, favorited, notebook }) {
             if (title) commit('title', title)
             if (content) commit('content', content)
+            if (favorited) commit('favorited', favorited)
             if (notebook) commit('notebook', notebook)
-            if (tags) commit('tags', tags)
         },
         clearNote({ commit }) {
             commit('id', null)
             commit('title', '')
             commit('content', '')
+            commit('favorited', false)
             commit('created', null)
             commit('notebook', null)
-            commit('tags', [])
         },
     },
 }

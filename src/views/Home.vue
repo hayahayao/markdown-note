@@ -1,7 +1,9 @@
 <template>
-  <el-main @click.native="handleClick">
-    <div>Tap to add new note</div>
-  </el-main>
+  <el-container>
+    <el-main @click.native="handleClick">
+      <div>Tap to add new note</div>
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -15,6 +17,7 @@ export default {
 </script>
 
 <style scoped>
+/* 实现文字垂直水平居中 */
 .el-main {
   cursor: pointer;
   display: -webkit-flex;

@@ -1,7 +1,9 @@
 <template>
-  <el-menu collapse router>
-    <BaseMenuItem v-for="item in items" :key="item" :index="item" :type="item" />
-  </el-menu>
+  <el-aside style="width: 65px;">
+    <el-menu collapse router>
+      <BaseMenuItem v-for="item in items" :key="item" :index="item" :type="item" />
+    </el-menu>
+  </el-aside>
 </template>
 
 <script>
@@ -9,7 +11,7 @@ import BaseMenuItem from "./BaseMenuItem.vue";
 export default {
   data() {
     return {
-      items: ['new', 'favorite', 'note', 'notebook', 'tag'],
+      items: ['new', 'favorite', 'note', 'notebook'],
     }
   },
   components: {
@@ -18,7 +20,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.el-aside,
 .el-menu {
   height: 100%;
 }

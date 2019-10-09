@@ -24,7 +24,6 @@ export default {
         ['favorite', 'el-icon-star-off'],
         ['note', 'el-icon-document'],
         ['notebook', 'el-icon-notebook-2'],
-        ['tag', 'el-icon-collection-tag']
       ])
       return iconMap.get(this.type)
     },
@@ -34,7 +33,6 @@ export default {
         ['favorite', '收藏'],
         ['note', '笔记'],
         ['notebook', '笔记本'],
-        ['tag', '标签']
       ])
       return contentMap.get(this.type)
     },
