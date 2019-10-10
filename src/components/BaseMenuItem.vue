@@ -1,7 +1,9 @@
 <template>
   <el-menu-item :index="index" :type="type">
-    <i :class="icon"></i>
-    <span slot="title">{{ content }}</span>
+    <router-link :to="to">
+      <i :class="icon"></i>
+      <span slot="title">{{ content }}</span>
+    </router-link>
   </el-menu-item>
 </template>
 
@@ -18,6 +20,9 @@ export default {
     },
   },
   computed: {
+    to() {
+      return { name: this.type }
+    },
     icon() {
       let iconMap = new Map([
         ['new', 'el-icon-plus'],

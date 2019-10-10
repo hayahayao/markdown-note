@@ -1,8 +1,8 @@
 <template>
   <el-col :span="11">
-    <el-input placeholder="标题" v-model="title"></el-input>
+    <el-input placeholder="标题" v-model="title" clearable></el-input>
     <el-divider></el-divider>
-    <el-input placeholder="Markdown内容" type="textarea" v-model="content"></el-input>
+    <el-input type="textarea" placeholder="Markdown内容" v-model="content" clearable></el-input>
   </el-col>
 </template>
 

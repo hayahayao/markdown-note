@@ -1,6 +1,6 @@
 <template>
   <el-aside style="width: 65px;">
-    <el-menu collapse router>
+    <el-menu collapse>
       <BaseMenuItem v-for="item in items" :key="item" :index="item" :type="item" />
     </el-menu>
   </el-aside>

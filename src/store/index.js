@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import note from './note'
+import { $read, $save, $delete, $keys } from '../plugins/storage'
 
 Vue.use(Vuex)
 
@@ -12,29 +13,54 @@ export default new Vuex.Store({
     },
     state() {
         return {
-            notelist: [], // item: {id, title}
+            listType: '',
+            itemList: [], // item: {id, title}
         }
     },
     getters: {
-        notelist: (state) => state.notelist,
+        listType: (state) => state.listType,
+        itemList: (state) => state.itemList,
     },
     mutations: {
-        removeNote(state, { id }) {
-            state.notelist = state.splice(state.notelist.findIndex(note => note.id === id), 1)
+        setType(state, value) {
+            state.listType = value
         },
-        addNote(state, { id, title }) {
-            state.notelist.push({
+        removeItem(state, { id }) {
+            state.itemList = state.splice(state.itemList.findIndex(item => item.id === id), 1)
+        },
+        addItem(state, { id, title }) {
+            state.itemList.push({
                 id: id,
                 title: title,
             })
         },
+        clearList(state) {
+            state.listType = null
+        }
     },
     actions: {
-        removeNote({ commit }, note) {
-            commit('removeNote', note)
+        setType({ commit }, value) {
+            commit('setType', value)
         },
-        addNote({ commit }, note) {
-            commit('addNote', note)
+        removeItem({ commit }, item) {
+            commit('removeItem', item)
+            $delete(item.id)
+        },
+        addItem({ commit }, item) {
+            commit('addItem', item)
+            $save(item)
+        },
+        loadList({ commit, dispatch }, type) {
+            dispatch('setType', type)
+            for (const key of $keys(type)) {
+                commit('addItem', $read(key))
+            }
+        },
+        clearList({ commit }) {
+            commit('clearList')
+        },
+        saveNote() {
+            $save(note)
         },
     },
 })

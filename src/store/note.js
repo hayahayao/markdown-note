@@ -1,3 +1,5 @@
+import { $read, $save } from "../plugins/storage"
+
 export default {
     namespaced: true,
     state() {
@@ -44,11 +46,26 @@ export default {
             commit('id', `note: ${String(time)}`)
             commit('created', String(time))
         },
-        updateNote({ commit }, { title, content, favorited, notebook }) {
-            if (title) commit('title', title)
-            if (content) commit('content', content)
-            if (favorited) commit('favorited', favorited)
-            if (notebook) commit('notebook', notebook)
+        updateNote({ getters, commit }, { title, content, favorited, notebook }) {
+            if (title !== undefined) commit('title', title)
+            if (content !== undefined) commit('content', content)
+            if (favorited !== undefined) commit('favorited', favorited)
+            if (notebook !== undefined) {
+                commit('notebook', notebook)
+                let storedNotebook = $read(notebook)
+                if (!storedNotebook.notes.includes(getters.id)) {
+                    storedNotebook.notes.push(getters.id)
+                }
+                $save(storedNotebook)
+            }
+            $save({
+                id: getters.id,
+                title: getters.title,
+                content: getters.content,
+                created: getters.created,
+                favorited: getters.favorited,
+                notebook: getters.notebook,
+            })
         },
         clearNote({ commit }) {
             commit('id', null)

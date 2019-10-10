@@ -1,14 +1,17 @@
 <template>
   <el-header style="height: 30px;">
     <el-select
-      v-model="newNotebook"
-      @change="handleChange"
+      v-model="value"
+      @change="handleChangeNotebook"
       size="mini"
       placeholder="选择笔记本"
       filterable
-      allow-create
-      default-first-option
     >
+      <el-option value="new-notebook">
+        <el-button @click="handleClickNewNotebook" type="text">
+          <i class="el-icon-plus"></i>创建新笔记本
+        </el-button>
+      </el-option>
       <el-option
         v-for="notebook in notebooks"
         :key="notebook.id"
@@ -23,31 +26,27 @@
 export default {
   data() {
     return {
-      newNotebook: []
+      value: '',
     }
   },
   computed: {
     notebooks() {
-      return this.$store.getters.notelist
-    },
-  },
-  watch: {
-    newNotebook: {
-      handler(val) {
-        if (val !== '') {
-          const time = Date.now()
-          this.$store.dispatch('addNote', {
-            id: `notebook: ${String(time)}`,
-            title: val,
-          })
-        }
-      }
+      return this.$store.getters.itemList
     },
   },
   methods: {
-    handleChange(value) {
+    handleChangeNotebook(value) {
       this.$store.dispatch('note/updateNote', { notebook: value })
+    },
+    handleClickNewNotebook() {
+      this.$router.push({ name: 'new-notebook' })
     }
+  },
+  created() {
+    this.$store.dispatch('loadList', 'notebook')
+  },
+  beforeDestroy() {
+    this.$store.dispatch('clearList')
   },
 }
 </script>

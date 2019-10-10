@@ -1,21 +1,8 @@
 <template>
   <div id="app">
-    <el-container>
-      <TheMenu />
-      <router-view />
-    </el-container>
+    <router-view />
   </div>
 </template>
-
-<script>
-import TheMenu from './components/TheMenu.vue';
-
-export default {
-  components: {
-    TheMenu
-  }
-};
-</script>
 
 <style>
 * {
@@ -29,5 +16,24 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+/* 实现水平垂直居中 */
+.center-wrapper {
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
 }
 </style>

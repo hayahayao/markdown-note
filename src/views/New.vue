@@ -1,22 +1,27 @@
 <template>
   <el-container>
-    <TheNoteMenu />
-    <el-main>
-      <el-row type="flex" justify="space-between">
-        <TheNoteInput />
-        <TheNoteDisplay />
-      </el-row>
-    </el-main>
+    <TheMenu />
+    <el-container>
+      <TheNoteMenu />
+      <el-main>
+        <el-row type="flex" justify="space-between">
+          <TheNoteInput />
+          <TheNoteDisplay />
+        </el-row>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
 <script>
+import TheMenu from '../components/TheMenu.vue';
 import TheNoteMenu from "../components/TheNoteMenu.vue";
 import TheNoteInput from '../components/TheNoteInput.vue'
 import TheNoteDisplay from '../components/TheNoteDisplay.vue'
 
 export default {
   components: {
+    TheMenu,
     TheNoteMenu,
     TheNoteInput,
     TheNoteDisplay,
@@ -28,7 +33,7 @@ export default {
 </script>
 
 <style scoped>
-.el-container {
+.el-container >>> .el-container {
   flex-direction: column;
 }
 /* main区域高度调整 */
