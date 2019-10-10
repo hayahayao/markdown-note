@@ -1,4 +1,4 @@
-import db from "../modules/database"
+import db from '../modules/database'
 
 export default {
     namespaced: true,
@@ -51,35 +51,25 @@ export default {
         },
     },
     actions: {
-        initNote({ getters, commit, dispatch }) {
+        async initNote({ getters, commit }) {
             const time = Date.now()
             commit('id', `${String(time)}`)
             commit('created', String(time))
-            db.add('note', getters.note, ({ error }) => {
-                dispatch('error', error, { root: true })
-            })
+            await db.add('note', getters.note)
         },
-        updateNote({ getters, commit, dispatch, rootGetters }, { title, content, favorited, notebook }) {
+        async updateNote({ getters, commit }, { title, content, favorited, notebook }) {
             if (title !== undefined) commit('title', title)
             if (content !== undefined) commit('content', content)
             if (favorited !== undefined) commit('favorited', favorited)
             if (notebook !== undefined) {
                 commit('notebook', notebook)
-                let storedNotebook = null
-                db.read('notebook', notebook, ({ data, error }) => {
-                    dispatch('error', error, { root: true })
-                    if (!rootGetters.error) storedNotebook = data
-                })
+                let storedNotebook = await db.read('notebook', notebook)
                 if (!storedNotebook.notes.includes(getters.id)) {
                     storedNotebook.notes.push(getters.id)
                 }
-                db.update('notebook', storedNotebook, ({ error }) => {
-                    dispatch('error', error, { root: true })
-                })
+                await db.update('notebook', storedNotebook)
             }
-            db.update('note', getters.note, ({ error }) => {
-                dispatch('error', error, { root: true })
-            })
+            await db.update('note', getters.note)
         },
         clearNote({ commit }) {
             commit('id', null)

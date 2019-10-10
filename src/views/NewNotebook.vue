@@ -25,15 +25,13 @@ export default {
     onCancel() {
       this.$router.go(-1)
     },
-    onSubmit() {
+    async onSubmit() {
       const notebook = {
         id: `${String(Date.now())}`,
         title: this.value,
         notes: [],
       }
-      db.add('notebook', notebook, ({ error }) => {
-        this.$store.dispatch('error', error)
-      })
+      await db.add('notebook', notebook)
       this.$router.go(-1)
     },
   }

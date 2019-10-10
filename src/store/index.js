@@ -52,23 +52,17 @@ export default new Vuex.Store({
                 commit('setError', value)
             }
         },
-        removeItem({ getters, commit }, item) {
+        async removeItem({ getters, commit }, item) {
             commit('removeItem', item)
-            db.delete(getters.listType, item.id)
+            await db.delete(getters.listType, item.id)
         },
-        addItem({ getters, commit, dispatch }, item) {
+        async addItem({ getters, commit }, item) {
             commit('addItem', item)
-            db.add(getters.listType, item, ({ error }) => {
-                dispatch('error', error)
-            })
+            await db.add(getters.listType, item)
         },
-        loadList({ getters, commit, dispatch }, type) {
+        async loadList({ commit, dispatch }, type) {
             dispatch('setType', type)
-            let list = []
-            db.readAll(type, ({ data, error }) => {
-                dispatch('error', error)
-                if (!getters.error) list = data
-            })
+            const list = await db.readAll(type)
             for (const item of list) {
                 commit('addItem', item)
             }
