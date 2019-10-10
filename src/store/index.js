@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import note from './note'
-import { $read, $save, $delete, $keys } from '../plugins/storage'
+import db from '../modules/database'
 
 Vue.use(Vuex)
 
@@ -15,15 +15,20 @@ export default new Vuex.Store({
         return {
             listType: '',
             itemList: [], // item: {id, title}
+            error: 0,
         }
     },
     getters: {
         listType: (state) => state.listType,
         itemList: (state) => state.itemList,
+        error: (state) => state.error,
     },
     mutations: {
         setType(state, value) {
             state.listType = value
+        },
+        setError(state, value) {
+            state.error = value
         },
         removeItem(state, { id }) {
             state.itemList = state.splice(state.itemList.findIndex(item => item.id === id), 1)
@@ -42,25 +47,34 @@ export default new Vuex.Store({
         setType({ commit }, value) {
             commit('setType', value)
         },
-        removeItem({ commit }, item) {
+        error({ commit }, value) {
+            if (value) {
+                commit('setError', value)
+            }
+        },
+        removeItem({ getters, commit }, item) {
             commit('removeItem', item)
-            $delete(item.id)
+            db.delete(getters.listType, item.id)
         },
-        addItem({ commit }, item) {
+        addItem({ getters, commit, dispatch }, item) {
             commit('addItem', item)
-            $save(item)
+            db.add(getters.listType, item, ({ error }) => {
+                dispatch('error', error)
+            })
         },
-        loadList({ commit, dispatch }, type) {
+        loadList({ getters, commit, dispatch }, type) {
             dispatch('setType', type)
-            for (const key of $keys(type)) {
-                commit('addItem', $read(key))
+            let list = []
+            db.readAll(type, ({ data, error }) => {
+                dispatch('error', error)
+                if (!getters.error) list = data
+            })
+            for (const item of list) {
+                commit('addItem', item)
             }
         },
         clearList({ commit }) {
             commit('clearList')
-        },
-        saveNote() {
-            $save(note)
         },
     },
 })

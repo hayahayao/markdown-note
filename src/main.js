@@ -5,7 +5,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import Storage from './plugins/storage'
+import db from './modules/database'
 
 Vue.config.productionTip = false
 
@@ -14,11 +14,14 @@ Vue.use(ElementUI, {
   zIndex: 3000
 })
 
-Vue.use(Storage)
+async function main() {
+  await db.initDB(['note', 'notebook'])
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
+  })
+}
 
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
-})
+main()

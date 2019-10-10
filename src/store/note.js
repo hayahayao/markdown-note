@@ -1,4 +1,4 @@
-import { $read, $save } from "../plugins/storage"
+import db from "../modules/database"
 
 export default {
     namespaced: true,
@@ -19,6 +19,16 @@ export default {
         created: state => state.created,
         favorited: state => state.favorited,
         notebook: state => state.notebook,
+        note: state => {
+            return {
+                id: state.id,
+                title: state.title,
+                content: state.content,
+                created: state.created,
+                favorited: state.favorited,
+                notebook: state.notebook
+            }
+        },
     },
     mutations: {
         id(state, value) {
@@ -41,30 +51,34 @@ export default {
         },
     },
     actions: {
-        initNote({ commit }) {
+        initNote({ getters, commit, dispatch }) {
             const time = Date.now()
-            commit('id', `note: ${String(time)}`)
+            commit('id', `${String(time)}`)
             commit('created', String(time))
+            db.add('note', getters.note, ({ error }) => {
+                dispatch('error', error, { root: true })
+            })
         },
-        updateNote({ getters, commit }, { title, content, favorited, notebook }) {
+        updateNote({ getters, commit, dispatch, rootGetters }, { title, content, favorited, notebook }) {
             if (title !== undefined) commit('title', title)
             if (content !== undefined) commit('content', content)
             if (favorited !== undefined) commit('favorited', favorited)
             if (notebook !== undefined) {
                 commit('notebook', notebook)
-                let storedNotebook = $read(notebook)
+                let storedNotebook = null
+                db.read('notebook', notebook, ({ data, error }) => {
+                    dispatch('error', error, { root: true })
+                    if (!rootGetters.error) storedNotebook = data
+                })
                 if (!storedNotebook.notes.includes(getters.id)) {
                     storedNotebook.notes.push(getters.id)
                 }
-                $save(storedNotebook)
+                db.update('notebook', storedNotebook, ({ error }) => {
+                    dispatch('error', error, { root: true })
+                })
             }
-            $save({
-                id: getters.id,
-                title: getters.title,
-                content: getters.content,
-                created: getters.created,
-                favorited: getters.favorited,
-                notebook: getters.notebook,
+            db.update('note', getters.note, ({ error }) => {
+                dispatch('error', error, { root: true })
             })
         },
         clearNote({ commit }) {

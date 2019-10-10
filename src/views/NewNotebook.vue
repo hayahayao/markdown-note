@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import db from '../modules/database'
+
 export default {
   data() {
     return {
@@ -25,11 +27,13 @@ export default {
     },
     onSubmit() {
       const notebook = {
-        id: `notebook: ${String(Date.now())}`,
+        id: `${String(Date.now())}`,
         title: this.value,
         notes: [],
       }
-      this.$save(notebook)
+      db.add('notebook', notebook, ({ error }) => {
+        this.$store.dispatch('error', error)
+      })
       this.$router.go(-1)
     },
   }

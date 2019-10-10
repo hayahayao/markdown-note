@@ -1,8 +1,19 @@
 <template>
   <div id="app">
+    <BaseErrorAlert />
     <router-view />
   </div>
 </template>
+
+<script>
+import BaseErrorAlert from './components/BaseErrorAlert.vue'
+
+export default {
+  components: {
+    BaseErrorAlert,
+  },
+}
+</script>
 
 <style>
 * {

@@ -42,7 +42,7 @@ export default {
       this.$router.push({ name: 'new-notebook' })
     }
   },
-  created() {
+  mounted() {
     this.$store.dispatch('loadList', 'notebook')
   },
   beforeDestroy() {

@@ -26,7 +26,7 @@ export default {
     TheNoteInput,
     TheNoteDisplay,
   },
-  created() {
+  mounted() {
     this.$store.dispatch('note/initNote')
   },
 }
