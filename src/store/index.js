@@ -14,7 +14,7 @@ export default new Vuex.Store({
     state() {
         return {
             listType: '',
-            itemList: [], // item: {id, title}
+            itemList: [], // item: {id, created, title}
             error: 0,
         }
     },
@@ -33,14 +33,16 @@ export default new Vuex.Store({
         removeItem(state, { id }) {
             state.itemList = state.splice(state.itemList.findIndex(item => item.id === id), 1)
         },
-        addItem(state, { id, title }) {
+        addItem(state, { id, title, created }) {
             state.itemList.push({
                 id: id,
                 title: title,
+                created: created,
             })
         },
         clearList(state) {
-            state.listType = null
+            state.listType = ''
+            state.itemList = []
         }
     },
     actions: {

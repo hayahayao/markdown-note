@@ -14,6 +14,8 @@ Vue.use(ElementUI, {
   zIndex: 3000
 })
 
+Vue.use(require('vue-moment'))
+
 async function main() {
   await db.initDB(['note', 'notebook'])
   new Vue({

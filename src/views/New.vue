@@ -26,8 +26,16 @@ export default {
     TheNoteInput,
     TheNoteDisplay,
   },
-  mounted() {
-    this.$store.dispatch('note/initNote')
+  created() {
+    switch (this.$route.params.from) {
+      case 'new-notebook':
+      case 'notes':
+        this.$store.dispatch('note/loadNote', this.$route.params.id)
+        break;
+      default:
+        this.$store.dispatch('note/initNote')
+        break;
+    }
   },
 }
 </script>

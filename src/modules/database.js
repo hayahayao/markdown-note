@@ -26,6 +26,6 @@ export default {
         return (this.dbPromise).getAll(type)
     },
     async delete(type, id) {
-        return (await this.dbPromise).delete(type, id)
+        return (this.dbPromise).delete(type, id)
     }
 }

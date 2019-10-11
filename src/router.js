@@ -42,6 +42,11 @@ export default new Router({
       path: '/new-notebook',
       name: 'new-notebook',
       component: NewNotebook,
+    },
+    {
+      path: '/note/:id',
+      name: 'note',
+      component: New,
     }
   ]
 })

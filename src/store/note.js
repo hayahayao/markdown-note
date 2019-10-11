@@ -8,7 +8,7 @@ export default {
             title: '',
             content: '',
             created: null,
-            notebook: null,
+            notebook: '',
             tags: [],
         }
     },
@@ -53,9 +53,21 @@ export default {
     actions: {
         async initNote({ getters, commit }) {
             const time = Date.now()
-            commit('id', `${String(time)}`)
-            commit('created', String(time))
+            commit('id', String(time))
+            commit('created', time)
             await db.add('note', getters.note)
+        },
+        setNote({ commit }, { id, title, content, created, notebook, tags }) {
+            commit('id', id)
+            commit('title', title)
+            commit('content', content)
+            commit('created', created)
+            commit('notebook', notebook)
+            commit('tags', tags)
+        },
+        async loadNote({ dispatch }, id) {
+            const note = await db.read('note', id)
+            dispatch('setNote', note)
         },
         async updateNote({ getters, commit }, { title, content, notebook, tags }) {
             if (title !== undefined) commit('title', title)

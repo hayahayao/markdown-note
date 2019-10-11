@@ -23,16 +23,30 @@ export default {
   },
   methods: {
     onCancel() {
-      this.$router.go(-1)
+      this.$router.push({
+        name: this.$route.params.from,
+        params: {
+          from: this.$route.fullPath.slice(1),
+          id: this.$route.params.id ? this.$route.params.id : ''
+        }
+      })
     },
     async onSubmit() {
+      const time = Date.now()
       const notebook = {
-        id: `${String(Date.now())}`,
+        id: String(time),
+        created: time,
         title: this.value,
         notes: [],
       }
       await db.add('notebook', notebook)
-      this.$router.go(-1)
+      this.$router.push({
+        name: this.$route.params.from,
+        params: {
+          from: this.$route.fullPath.slice(1),
+          id: this.$route.params.id ? this.$route.params.id : ''
+        }
+      })
     },
   }
 }

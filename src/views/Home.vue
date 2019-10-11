@@ -16,7 +16,13 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$router.push({ name: 'new' })
+      this.$router.push({
+        name: 'new',
+        params: {
+          from: 'home',
+          id: '',
+        }
+      })
     },
   },
 }

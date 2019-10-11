@@ -22,7 +22,12 @@ export default {
   },
   computed: {
     to() {
-      return { name: this.type }
+      return {
+        name: this.type,
+        params: {
+          from: this.$route.fullPath.slice(1),
+        },
+      }
     },
     icon() {
       let iconMap = new Map([
