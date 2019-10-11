@@ -11,7 +11,7 @@ import BaseMenuItem from "./BaseMenuItem.vue";
 export default {
   data() {
     return {
-      items: ['new', 'favorite', 'note', 'notebook'],
+      items: ['new', 'notes', 'notebooks', 'tags'],
     }
   },
   components: {

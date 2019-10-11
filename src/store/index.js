@@ -48,9 +48,7 @@ export default new Vuex.Store({
             commit('setType', value)
         },
         error({ commit }, value) {
-            if (value) {
-                commit('setError', value)
-            }
+            commit('setError', value)
         },
         async removeItem({ getters, commit }, item) {
             commit('removeItem', item)

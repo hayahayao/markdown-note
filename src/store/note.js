@@ -8,8 +8,8 @@ export default {
             title: '',
             content: '',
             created: null,
-            favorited: false,
             notebook: null,
+            tags: [],
         }
     },
     getters: {
@@ -17,16 +17,16 @@ export default {
         title: state => state.title,
         content: state => state.content,
         created: state => state.created,
-        favorited: state => state.favorited,
         notebook: state => state.notebook,
+        tags: state => state.tags,
         note: state => {
             return {
                 id: state.id,
                 title: state.title,
                 content: state.content,
                 created: state.created,
-                favorited: state.favorited,
-                notebook: state.notebook
+                notebook: state.notebook,
+                tags: state.tags,
             }
         },
     },
@@ -43,11 +43,11 @@ export default {
         created(state, value) {
             state.created = value
         },
-        favorited(state, value) {
-            state.favorited = value
-        },
         notebook(state, value) {
             state.notebook = value
+        },
+        tags(state, value) {
+            state.tags = value
         },
     },
     actions: {
@@ -57,10 +57,9 @@ export default {
             commit('created', String(time))
             await db.add('note', getters.note)
         },
-        async updateNote({ getters, commit }, { title, content, favorited, notebook }) {
+        async updateNote({ getters, commit }, { title, content, notebook, tags }) {
             if (title !== undefined) commit('title', title)
             if (content !== undefined) commit('content', content)
-            if (favorited !== undefined) commit('favorited', favorited)
             if (notebook !== undefined) {
                 commit('notebook', notebook)
                 let storedNotebook = await db.read('notebook', notebook)
@@ -69,15 +68,16 @@ export default {
                 }
                 await db.update('notebook', storedNotebook)
             }
+            if (tags !== undefined) commit('tags', tags)
             await db.update('note', getters.note)
         },
         clearNote({ commit }) {
             commit('id', null)
             commit('title', '')
             commit('content', '')
-            commit('favorited', false)
             commit('created', null)
             commit('notebook', null)
+            commit('tags', [])
         },
     },
 }

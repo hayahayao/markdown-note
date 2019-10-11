@@ -2,9 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import New from './views/New.vue'
-import Favorite from './views/Favorite.vue'
-import Note from './views/Note.vue'
-import Notebook from './views/Notebook.vue'
+import Notes from './views/Notes.vue'
+import Notebooks from './views/Notebooks.vue'
+import Tags from './views/Tags.vue'
 import NewNotebook from './views/NewNotebook.vue'
 
 Vue.use(Router)
@@ -24,19 +24,19 @@ export default new Router({
       component: New,
     },
     {
-      path: '/favorite',
-      name: 'favorite',
-      component: Favorite,
+      path: '/notes',
+      name: 'notes',
+      component: Notes,
     },
     {
-      path: '/note',
-      name: 'note',
-      component: Note,
+      path: '/notebooks',
+      name: 'notebooks',
+      component: Notebooks,
     },
     {
-      path: '/notebook',
-      name: 'notebook',
-      component: Notebook,
+      path: '/tags',
+      name: 'tags',
+      component: Tags,
     },
     {
       path: '/new-notebook',
