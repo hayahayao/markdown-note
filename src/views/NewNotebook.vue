@@ -6,15 +6,13 @@
       </el-form-item>
       <el-form-item>
         <el-button size="medium" @click="onCancel">取消</el-button>
-        <el-button size="medium" type="primary" @click="onSubmit">创建笔记本</el-button>
+        <el-button size="medium" type="primary" :disabled="value === ''" @click="onSubmit">创建笔记本</el-button>
       </el-form-item>
     </el-form>
   </el-container>
 </template>
 
 <script>
-import db from '../modules/database'
-
 export default {
   data() {
     return {
@@ -32,22 +30,27 @@ export default {
       })
     },
     async onSubmit() {
-      const time = Date.now()
-      const notebook = {
-        id: String(time),
-        created: time,
-        title: this.value,
-        notes: [],
-      }
-      await db.add('notebook', notebook)
+      await this.$store.dispatch('addItem', {
+        type: 'notebooks',
+        item: {
+          id: String(Date.now()),
+          title: this.value,
+          notes: [],
+        }
+      })
       this.$router.push({
-        name: this.$route.params.from,
+        name: this.$route.params.from ? this.$route.params.from : 'home',
         params: {
           from: this.$route.fullPath.slice(1),
           id: this.$route.params.id ? this.$route.params.id : ''
         }
       })
     },
+  },
+  beforeDestroy() {
+    this.$store.dispatch('clearList', {
+      type: 'notebooks'
+    })
   }
 }
 </script>

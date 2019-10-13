@@ -13,62 +13,68 @@ export default new Vuex.Store({
     },
     state() {
         return {
-            listType: '',
-            itemList: [], // item: {id, created, title}
-            error: 0,
+            notebooks: [], // item: {id, title, notes: {id, created, title}}
+            tags: [], // item: {id, title, notes: {id, created, title}}
+            notes: [], // item: {id, created, title, content, notebook, tags}
         }
     },
     getters: {
-        listType: (state) => state.listType,
-        itemList: (state) => state.itemList,
-        error: (state) => state.error,
+        notebooks: (state) => state.notebooks,
+        tags: (state) => state.tags,
+        notes: (state) => state.notes,
     },
     mutations: {
-        setType(state, value) {
-            state.listType = value
+        removeItem(state, { type, id }) {
+            state[type] = state[type].splice(state[type].findIndex(item => item.id === id), 1)
         },
-        setError(state, value) {
-            state.error = value
+        addItem(state, { type, item }) {
+            state[type].push(item)
         },
-        removeItem(state, { id }) {
-            state.itemList = state.splice(state.itemList.findIndex(item => item.id === id), 1)
+        updateItem(state, { type, item }) {
+            let itemIndex = state[type].findIndex(item => item.id === item.id)
+            state[type][itemIndex] = item
         },
-        addItem(state, { id, title, created }) {
-            state.itemList.push({
-                id: id,
-                title: title,
-                created: created,
-            })
+        clearList(state, { type }) {
+            state[type] = []
         },
-        clearList(state) {
-            state.listType = ''
-            state.itemList = []
-        }
     },
     actions: {
-        setType({ commit }, value) {
-            commit('setType', value)
+        async removeItem({ commit }, { type, item }) {
+            commit('removeItem', {
+                type: type,
+                id: item.id
+            })
+            await db.delete(type, item.id)
         },
-        error({ commit }, value) {
-            commit('setError', value)
+        async addItem({ commit }, { type, item }) {
+            // eslint-disable-next-line
+            console.log(item)
+            commit('addItem', {
+                type: type,
+                item: item
+            })
+            await db.add(type, item)
         },
-        async removeItem({ getters, commit }, item) {
-            commit('removeItem', item)
-            await db.delete(getters.listType, item.id)
+        async updateItem({ commit }, { type, item }) {
+            commit('updateItem', {
+                type: type,
+                item: item
+            })
+            await db.update(type, item)
         },
-        async addItem({ getters, commit }, item) {
-            commit('addItem', item)
-            await db.add(getters.listType, item)
-        },
-        async loadList({ commit, dispatch }, type) {
-            dispatch('setType', type)
+        async loadList({ commit }, { type }) {
             const list = await db.readAll(type)
             for (const item of list) {
-                commit('addItem', item)
+                commit('addItem', {
+                    type: type,
+                    item: item
+                })
             }
         },
-        clearList({ commit }) {
-            commit('clearList')
+        clearList({ commit }, { type }) {
+            commit('clearList', {
+                type: type
+            })
         },
     },
 })

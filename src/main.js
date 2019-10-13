@@ -17,7 +17,7 @@ Vue.use(ElementUI, {
 Vue.use(require('vue-moment'))
 
 async function main() {
-  await db.initDB(['note', 'notebook'])
+  await db.initDB(['notes', 'notebooks', 'tags'])
   new Vue({
     el: '#app',
     router,

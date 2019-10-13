@@ -30,7 +30,9 @@ export default {
     switch (this.$route.params.from) {
       case 'new-notebook':
       case 'notes':
-        this.$store.dispatch('note/loadNote', this.$route.params.id)
+        this.$store.dispatch('note/loadNote', {
+          id: this.$route.params.id
+        })
         break;
       default:
         this.$store.dispatch('note/initNote')

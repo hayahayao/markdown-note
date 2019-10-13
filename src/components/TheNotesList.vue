@@ -1,6 +1,6 @@
 <template>
   <el-main>
-    <el-table :data="tableData" highlight-current-row @current-change="handleCurrentChange">
+    <el-table :data="notes" highlight-current-row @current-change="handleCurrentChange">
       <el-table-column label="日期">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
@@ -15,8 +15,8 @@
 <script>
 export default {
   computed: {
-    tableData() {
-      return this.$store.getters.itemList
+    notes() {
+      return this.$store.getters.notes
     },
   },
   methods: {
@@ -31,7 +31,9 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$store.dispatch('clearList')
+    this.$store.dispatch('clearList', {
+      type: 'notes'
+    })
   }
 }
 </script>

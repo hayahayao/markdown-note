@@ -31,35 +31,36 @@ export default {
   },
   computed: {
     notebooks() {
-      return this.$store.getters.itemList
+      return this.$store.getters.notebooks
     },
   },
   methods: {
-    handleClickNewNotebook() {
-      this.$router.push({
-        name: 'new-notebook',
-        params: {
-          from: this.$route.fullPath.slice(1),
-          id: this.$store.getters['note/id']
-        },
-      })
-    },
-    handleChangeNotebook(value) {
-      if (value !== 'new-notebook') {
-        this.$store.dispatch('note/updateNote', { notebook: value })
+    async handleChangeNotebook(value) {
+      if (value === 'new-notebook') {
+        this.$router.push({
+          name: 'new-notebook',
+          params: {
+            from: this.$route.fullPath.slice(1),
+            id: this.$store.getters['note/id']
+          },
+        })
       } else {
-        this.handleClickNewNotebook()
+        await this.$store.dispatch('note/updateNote', { notebook: this.notebooks.find(item => item.id === value) })
       }
     },
   },
   created() {
-    this.$store.dispatch('loadList', 'notebook')
-    if (this.$store.getters['note/notebook']) {
-      this.value = this.$store.getters['note/notebook']
+    this.$store.dispatch('loadList', {
+      type: 'notebooks'
+    })
+    if (this.$store.getters['note/notebook'] !== null) {
+      this.value = this.$store.getters['note/notebook'].title
     }
   },
   beforeDestroy() {
-    this.$store.dispatch('clearList')
+    this.$store.dispatch('clearList', {
+      type: 'notebooks'
+    })
   },
 }
 </script>

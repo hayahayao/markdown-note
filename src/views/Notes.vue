@@ -15,7 +15,9 @@ export default {
     TheNotesList,
   },
   created() {
-    this.$store.dispatch('loadList', 'note')
+    this.$store.dispatch('loadList', {
+      type: 'notes'
+    })
   },
 }
 </script>
