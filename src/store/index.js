@@ -25,14 +25,14 @@ export default new Vuex.Store({
     },
     mutations: {
         removeItem(state, { type, id }) {
-            let itemIndex = state[type].findIndex(i => i.id === id)
+            const itemIndex = state[type].findIndex(i => i.id === id)
             state[type].splice(itemIndex, 1)
         },
         addItem(state, { type, item }) {
             state[type].push(item)
         },
         updateItem(state, { type, item }) {
-            let itemIndex = state[type].findIndex(i => i.id === item.id)
+            const itemIndex = state[type].findIndex(i => i.id === item.id)
             state[type][itemIndex] = item
         },
         clearList(state, { type }) {
@@ -43,7 +43,7 @@ export default new Vuex.Store({
         async removeItem({ commit, dispatch }, { type, item }) {
             commit('removeItem', {
                 type: type,
-                item: item.id,
+                id: item.id,
             })
             switch (type) {
                 case 'notes': {
@@ -54,9 +54,10 @@ export default new Vuex.Store({
                 }
                 case 'notebooks': {
                     // 删除其对应的note中的信息
-                    let notes = await db.read('notebooks', item.id).notes
+                    const notebook = await db.read('notebooks', item.id)
+                    const notes = notebook.notes
                     for (const note of notes) {
-                        let currentNote = db.read('notes', note.id)
+                        let currentNote = await db.read('notes', note.id)
                         currentNote.notebook = null
                         await db.update('notes', currentNote)
                     }
@@ -65,9 +66,10 @@ export default new Vuex.Store({
                     break
                 }
                 case 'tags': {
-                    const notes = await db.read('tags', item.id).notes
+                    const tags = await db.read('tags', item.id)
+                    const notes = tags.notes
                     for (const note of notes) {
-                        let currentNote = db.read('notes', note.id)
+                        let currentNote = await db.read('notes', note.id)
                         currentNote.tags.splice(currentNote.tags.findIndex(tag => tag.id === item.id), 1)
                         await db.update('notes', currentNote)
                     }

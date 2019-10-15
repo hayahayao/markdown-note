@@ -4,6 +4,7 @@
       ref="table"
       :data="notes"
       highlight-current-row
+      row-key="id"
       @current-change="handleCurrentChange"
       @selection-change="handleSelectionChange"
     >
@@ -53,10 +54,10 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    handleDelete() {
+    async handleDelete() {
       if (this.multipleSelection.length) {
         for (const selection of this.multipleSelection) {
-          this.$store.dispatch('removeItem', {
+          await this.$store.dispatch('removeItem', {
             type: 'notes',
             item: selection,
           })
