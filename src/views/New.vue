@@ -20,6 +20,12 @@ import TheNoteInput from '../components/TheNoteInput.vue'
 import TheNoteDisplay from '../components/TheNoteDisplay.vue'
 
 export default {
+  props: {
+    id: {
+      type: String,
+      required: false,
+    }
+  },
   components: {
     TheMenu,
     TheNoteMenu,
@@ -27,9 +33,9 @@ export default {
     TheNoteDisplay,
   },
   created() {
-    if (this.$route.params.id) {
+    if (this.id) {
       this.$store.dispatch('note/loadNote', {
-        id: this.$route.params.id
+        id: this.id
       })
     } else {
       this.$store.dispatch('note/initNote')

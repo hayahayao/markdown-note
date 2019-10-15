@@ -47,6 +47,16 @@ export default new Router({
       path: '/note/:id',
       name: 'note',
       component: New,
-    }
+      props: route => ({ id: route.params.id })
+    },
+    {
+      path: '/notebooks/:id',
+      name: 'notebooks-notes',
+      component: Notes,
+      props: route => ({
+        id: route.params.id,
+        type: route.params.from ? route.params.from : route.name.split('-')[0]
+      })
+    },
   ]
 })

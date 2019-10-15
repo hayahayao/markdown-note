@@ -96,9 +96,7 @@ export default {
                 let currentNotebook = await db.read('notebooks', newNotebook.id)
                 if (!currentNotebook.notes.find(note => note.id === getters.id)) {
                     currentNotebook.notes.push({
-                        id: getters.id,
-                        created: getters.created,
-                        title: getters.title,
+                        id: getters.id
                     })
                 }
                 await db.update('notebooks', currentNotebook)
@@ -111,9 +109,7 @@ export default {
                 if (!oldTags.find(item => item.id === tag.id)) {
                     let currentTag = await db.read('tags', tag.id)
                     currentTag.notes.push({
-                        id: getters.id,
-                        created: getters.created,
-                        title: getters.title,
+                        id: getters.id
                     })
                     await db.update('tags', currentTag)
                 }

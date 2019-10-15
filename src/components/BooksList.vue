@@ -2,24 +2,13 @@
   <el-main>
     <el-table
       ref="table"
-      :data="notes"
+      :data="books"
       highlight-current-row
       @current-change="handleCurrentChange"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label="日期">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{ scope.row.created | moment('YYYY/MM/DD HH:mm') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="title" label="标题"></el-table-column>
-      <el-table-column label="笔记本">
-        <template slot-scope="scope">
-          <span>{{ scope.row.notebook ? scope.row.notebook.title : '' }}</span>
-        </template>
-      </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
       <el-button type="danger" @click="handleDelete">删除</el-button>
@@ -30,20 +19,26 @@
 
 <script>
 export default {
+  props: {
+    type: {
+      type: String,
+      required: true,
+    }
+  },
   data() {
     return {
       multipleSelection: [],
     }
   },
   computed: {
-    notes() {
-      return this.$store.getters.notes
+    books() {
+      return this.$store.getters[this.type]
     },
   },
   methods: {
     handleCurrentChange(val) {
       this.$router.push({
-        name: 'note',
+        name: `${this.type}-notes`,
         params: {
           from: this.$route.fullPath.slice(1),
           id: val.id,
@@ -57,7 +52,7 @@ export default {
       if (this.multipleSelection.length) {
         for (const selection of this.multipleSelection) {
           this.$store.dispatch('removeItem', {
-            type: 'notes',
+            type: 'notebooks',
             item: selection,
           })
         }

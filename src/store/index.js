@@ -13,8 +13,8 @@ export default new Vuex.Store({
     },
     state() {
         return {
-            notebooks: [], // item: {id, title, notes: {id, created, title}}
-            tags: [], // item: {id, title, notes: {id, created, title}}
+            notebooks: [], // item: {id, title, notes: {id}}
+            tags: [], // item: {id, title, notes: {id}}
             notes: [], // item: {id, created, title, notebook, tags}
         }
     },
@@ -98,6 +98,7 @@ export default new Vuex.Store({
             for (const storedItem of list) {
                 let item = {}
                 if (type === 'notes') {
+                    // no content
                     item = {
                         id: storedItem.id,
                         created: storedItem.created,
@@ -111,6 +112,22 @@ export default new Vuex.Store({
                 commit('addItem', {
                     type: type,
                     item: item
+                })
+            }
+        },
+        async loadSpecialList({ commit }, { type, id }) {
+            const book = await db.read(type, id)
+            for (const note of book.notes) {
+                const storedNote = await db.read('notes', note.id)
+                commit('addItem', {
+                    type: 'notes',
+                    item: {
+                        id: storedNote.id,
+                        created: storedNote.created,
+                        title: storedNote.title,
+                        notebook: storedNote.notebook,
+                        tags: storedNote.tags
+                    }
                 })
             }
         },

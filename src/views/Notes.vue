@@ -10,14 +10,36 @@ import TheMenu from '../components/TheMenu.vue';
 import TheNotesList from '../components/TheNotesList.vue'
 
 export default {
+  props: {
+    id: {
+      type: String,
+      required: false,
+    },
+    type: {
+      type: String,
+      required: false,
+    }
+  },
   components: {
     TheMenu,
     TheNotesList,
   },
   created() {
-    this.$store.dispatch('loadList', {
+    if (this.id) {
+      this.$store.dispatch('loadSpecialList', {
+        type: this.type,
+        id: this.id
+      })
+    } else {
+      this.$store.dispatch('loadList', {
+        type: 'notes'
+      })
+    }
+  },
+  beforeDestroy() {
+    this.$store.dispatch('clearList', {
       type: 'notes'
     })
-  },
+  }
 }
 </script>
