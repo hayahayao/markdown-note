@@ -66,71 +66,11 @@ export default {
             commit('notebook', note.notebook)
             commit('tags', note.tags)
         },
-        async updateNote({ getters, commit, dispatch }, { title, content, notebook, tags }) {
+        updateNote({ commit }, { title, content, notebook, tags }) {
             if (title !== undefined) commit('title', title)
             if (content !== undefined) commit('content', content)
-            if (notebook !== undefined) {
-                const oldNotebook = getters.notebook
-                const newNotebook = notebook
-                commit('notebook', notebook)
-
-                // 删除oldNotebook中的notes信息
-                if (oldNotebook) {
-                    let currentNotebook = await db.read('notebooks', oldNotebook.id)
-                    currentNotebook.notes.splice(currentNotebook.notes.findIndex(note => note.id === getters.id), 1)
-                    dispatch('updateItem', {
-                        type: 'notebooks',
-                        item: currentNotebook
-                    }, { root: true })
-                }
-
-                // 增加newNotebook中的notes信息
-                let currentNotebook = await db.read('notebooks', newNotebook.id)
-                if (!currentNotebook.notes.findIndex(note => note.id === getters.id)) {
-                    currentNotebook.notes.push({
-                        id: getters.id,
-                        created: getters.created,
-                        title: getters.title,
-                    })
-                }
-                dispatch('updateItem', {
-                    type: 'notebooks',
-                    item: currentNotebook
-                }, { root: true })
-            }
-            if (tags !== undefined) {
-                const oldTags = getters.tags
-                const newTags = tags
-                commit('tags', tags)
-
-                // 新增tag（newTags中有而oldTags中没有）
-                for (const tag of newTags) {
-                    if (!oldTags.find(item => item.id === tag.id)) {
-                        let currentTag = await db.read('tags', tag.id)
-                        currentTag.notes.push({
-                            id: getters.id,
-                            created: getters.created,
-                            title: getters.title,
-                        })
-                        dispatch('updateItem', {
-                            type: 'tags',
-                            item: currentTag
-                        }, { root: true })
-                    }
-                }
-                // 删除tag（oldTags中有而newTags中没有）
-                for (const tag of oldTags) {
-                    if (!newTags.find(item => item.id === tag.id)) {
-                        let currentTag = await db.read('tags', tag.id)
-                        currentTag.notes.splice(currentTag.notes.findIndex(note => note.id === getters.id), 1)
-                        dispatch('updateItem', {
-                            type: 'tags',
-                            item: currentTag
-                        }, { root: true })
-                    }
-                }
-            }
-            await db.update('notes', getters.note)
+            if (notebook !== undefined) commit('notebook', notebook)
+            if (tags !== undefined) commit('tags', tags)
         },
         clearNote({ commit }) {
             commit('id', null)
@@ -140,5 +80,79 @@ export default {
             commit('notebook', null)
             commit('tags', [])
         },
+        async saveNote({ getters }) {
+            const oldNote = await db.read('notes', getters.id)
+
+            // 删除oldNotebook中的notes信息
+            const oldNotebook = oldNote.notebook
+            if (oldNotebook) {
+                let currentNotebook = await db.read('notebooks', oldNotebook.id)
+                currentNotebook.notes.splice(currentNotebook.notes.findIndex(note => note.id === getters.id), 1)
+                await db.update('notebooks', currentNotebook)
+            }
+            // 增加newNotebook中的notes信息
+            const newNotebook = getters.notebook
+            if (newNotebook) {
+                let currentNotebook = await db.read('notebooks', newNotebook.id)
+                if (!currentNotebook.notes.find(note => note.id === getters.id)) {
+                    currentNotebook.notes.push({
+                        id: getters.id,
+                        created: getters.created,
+                        title: getters.title,
+                    })
+                }
+                await db.update('notebooks', currentNotebook)
+            }
+
+            const oldTags = oldNote.tags
+            const newTags = getters.tags
+            // 新增tag（newTags中有而oldTags中没有）
+            for (const tag of newTags) {
+                if (!oldTags.find(item => item.id === tag.id)) {
+                    let currentTag = await db.read('tags', tag.id)
+                    currentTag.notes.push({
+                        id: getters.id,
+                        created: getters.created,
+                        title: getters.title,
+                    })
+                    await db.update('tags', currentTag)
+                }
+            }
+            // 删除tag（oldTags中有而newTags中没有）
+            for (const tag of oldTags) {
+                if (!newTags.find(item => item.id === tag.id)) {
+                    let currentTag = await db.read('tags', tag.id)
+                    currentTag.notes.splice(currentTag.notes.findIndex(note => note.id === getters.id), 1)
+                    await db.update('tags', currentTag)
+                }
+            }
+
+            await db.update('notes', getters.note)
+        },
+        async deleteNote({ getters, dispatch }, { id }) {
+            await dispatch('loadNote', {
+                id: id,
+            })
+
+            // 删除db中对应notebook中保存的note信息
+            const notebook = getters.notebook
+            if (notebook) {
+                let currentNotebook = await db.read('notebooks', notebook.id)
+                currentNotebook.notes.splice(currentNotebook.notes.findIndex(note => note.id === getters.id), 1)
+                await db.update('notebooks', currentNotebook)
+            }
+
+            // 删除db中对应tags中保存的note信息
+            const tags = getters.tags
+            if (tags.length) {
+                for (const tag of tags) {
+                    let currentTag = await db.read('tags', tag.id)
+                    currentTag.notes.splice(currentTag.notes.findIndex(note => note.id === getters.id), 1)
+                    await db.update('tags', currentTag)
+                }
+            }
+            dispatch('clearNote')
+            await db.delete('notes', id)
+        }
     },
 }

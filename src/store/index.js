@@ -15,7 +15,7 @@ export default new Vuex.Store({
         return {
             notebooks: [], // item: {id, title, notes: {id, created, title}}
             tags: [], // item: {id, title, notes: {id, created, title}}
-            notes: [], // item: {id, created, title, content, notebook, tags}
+            notes: [], // item: {id, created, title, notebook, tags}
         }
     },
     getters: {
@@ -25,13 +25,14 @@ export default new Vuex.Store({
     },
     mutations: {
         removeItem(state, { type, id }) {
-            state[type] = state[type].splice(state[type].findIndex(item => item.id === id), 1)
+            let itemIndex = state[type].findIndex(i => i.id === id)
+            state[type].splice(itemIndex, 1)
         },
         addItem(state, { type, item }) {
             state[type].push(item)
         },
         updateItem(state, { type, item }) {
-            let itemIndex = state[type].findIndex(item => item.id === item.id)
+            let itemIndex = state[type].findIndex(i => i.id === item.id)
             state[type][itemIndex] = item
         },
         clearList(state, { type }) {
@@ -39,16 +40,46 @@ export default new Vuex.Store({
         },
     },
     actions: {
-        async removeItem({ commit }, { type, item }) {
+        async removeItem({ commit, dispatch }, { type, item }) {
             commit('removeItem', {
                 type: type,
-                id: item.id
+                item: item.id,
             })
-            await db.delete(type, item.id)
+            switch (type) {
+                case 'notes': {
+                    dispatch('note/deleteNote', {
+                        id: item.id,
+                    })
+                    break
+                }
+                case 'notebooks': {
+                    // 删除其对应的note中的信息
+                    let notes = await db.read('notebooks', item.id).notes
+                    for (const note of notes) {
+                        let currentNote = db.read('notes', note.id)
+                        currentNote.notebook = null
+                        await db.update('notes', currentNote)
+                    }
+                    // 删除本体
+                    await db.delete('notebooks', item.id)
+                    break
+                }
+                case 'tags': {
+                    const notes = await db.read('tags', item.id).notes
+                    for (const note of notes) {
+                        let currentNote = db.read('notes', note.id)
+                        currentNote.tags.splice(currentNote.tags.findIndex(tag => tag.id === item.id), 1)
+                        await db.update('notes', currentNote)
+                    }
+                    await db.delete('tags', item.id)
+                    break
+                }
+                default: {
+                    break
+                }
+            }
         },
         async addItem({ commit }, { type, item }) {
-            // eslint-disable-next-line
-            console.log(item)
             commit('addItem', {
                 type: type,
                 item: item
@@ -64,7 +95,19 @@ export default new Vuex.Store({
         },
         async loadList({ commit }, { type }) {
             const list = await db.readAll(type)
-            for (const item of list) {
+            for (const storedItem of list) {
+                let item = {}
+                if (type === 'notes') {
+                    item = {
+                        id: storedItem.id,
+                        created: storedItem.created,
+                        title: storedItem.title,
+                        notebook: storedItem.notebook,
+                        tags: storedItem.tags
+                    }
+                } else {
+                    item = storedItem
+                }
                 commit('addItem', {
                     type: type,
                     item: item

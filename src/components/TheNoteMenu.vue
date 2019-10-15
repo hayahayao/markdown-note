@@ -1,5 +1,6 @@
 <template>
   <el-header style="height: 30px;">
+    <el-button style="margin-right: 20px;" type="primary" @click="handleSave">保存</el-button>
     <el-select
       v-model="value"
       @change="handleChangeNotebook"
@@ -45,8 +46,18 @@ export default {
           },
         })
       } else {
-        await this.$store.dispatch('note/updateNote', { notebook: this.notebooks.find(item => item.id === value) })
+        const currentNotebook = this.notebooks.find(item => item.id === value)
+        await this.$store.dispatch('note/updateNote', {
+          notebook: {
+            id: currentNotebook.id,
+            title: currentNotebook.title
+          }
+        })
       }
+    },
+    async handleSave() {
+      await this.$store.dispatch('note/saveNote')
+      this.$router.push({ name: 'notes' })
     },
   },
   created() {

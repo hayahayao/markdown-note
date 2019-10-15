@@ -27,17 +27,16 @@ export default {
     TheNoteDisplay,
   },
   created() {
-    switch (this.$route.params.from) {
-      case 'new-notebook':
-      case 'notes':
-        this.$store.dispatch('note/loadNote', {
-          id: this.$route.params.id
-        })
-        break;
-      default:
-        this.$store.dispatch('note/initNote')
-        break;
+    if (this.$route.params.id) {
+      this.$store.dispatch('note/loadNote', {
+        id: this.$route.params.id
+      })
+    } else {
+      this.$store.dispatch('note/initNote')
     }
+  },
+  beforeDestroy() {
+    this.$store.dispatch('note/clearNote')
   },
 }
 </script>
