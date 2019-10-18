@@ -51,11 +51,10 @@ export default {
         },
     },
     actions: {
-        async initNote({ getters, commit }) {
+        initNote({ commit }) {
             const time = Date.now()
             commit('id', String(time))
             commit('created', time)
-            await db.add('notes', getters.note)
         },
         async loadNote({ commit }, { id }) {
             const note = await db.read('notes', id)

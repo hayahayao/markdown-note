@@ -24,22 +24,29 @@ export default {
     TheMenu,
     TheNotesList,
   },
-  created() {
-    if (this.id) {
-      this.$store.dispatch('loadSpecialList', {
-        type: this.type,
-        id: this.id
-      })
-    } else {
-      this.$store.dispatch('loadList', {
-        type: 'notes'
-      })
-    }
-  },
   beforeDestroy() {
     this.$store.dispatch('clearList', {
       type: 'notes'
     })
-  }
+  },
+  beforeRouteEnter(to, from, next) {
+    const id = to.params.id
+    const type = to.params.from ? to.params.from : to.name.split('-')[0]
+    next(vm => {
+      vm.$store.dispatch('clearList', {
+        type: 'notes'
+      })
+      if (id) {
+        vm.$store.dispatch('loadSpecialList', {
+          type: type,
+          id: id
+        })
+      } else {
+        vm.$store.dispatch('loadList', {
+          type: 'notes'
+        })
+      }
+    })
+  },
 }
 </script>
