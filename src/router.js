@@ -6,6 +6,7 @@ import Notes from './views/Notes.vue'
 import Notebooks from './views/Notebooks.vue'
 import Tags from './views/Tags.vue'
 import NewNotebook from './views/NewNotebook.vue'
+import NewTag from './views/NewTag.vue'
 
 Vue.use(Router)
 
@@ -44,6 +45,11 @@ export default new Router({
       component: NewNotebook,
     },
     {
+      path: '/new-tag',
+      name: 'new-tag',
+      component: NewTag,
+    },
+    {
       path: '/note/:id',
       name: 'note',
       component: New,
@@ -52,6 +58,15 @@ export default new Router({
     {
       path: '/notebooks/:id',
       name: 'notebooks-notes',
+      component: Notes,
+      props: route => ({
+        id: route.params.id,
+        type: route.params.from ? route.params.from : route.name.split('-')[0]
+      })
+    },
+    {
+      path: '/tags/:id',
+      name: 'tags-notes',
       component: Notes,
       props: route => ({
         id: route.params.id,

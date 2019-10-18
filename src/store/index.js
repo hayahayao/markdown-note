@@ -117,7 +117,8 @@ export default new Vuex.Store({
                 })
             }
         },
-        async loadSpecialList({ commit }, { type, id }) {
+        async loadSpecialNoteList({ commit }, { type, id }) {
+            // 根据book的id读取book中保存的note
             const book = await db.read(type, id)
             for (const note of book.notes) {
                 const storedNote = await db.read('notes', note.id)

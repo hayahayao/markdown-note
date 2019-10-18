@@ -37,7 +37,7 @@ export default {
         type: 'notes'
       })
       if (id) {
-        vm.$store.dispatch('loadSpecialList', {
+        vm.$store.dispatch('loadSpecialNoteList', {
           type: type,
           id: id
         })

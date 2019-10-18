@@ -56,6 +56,11 @@ export default {
   height: calc(100% - 30px);
 }
 
+.el-main >>> .el-textarea,
+.el-main >>> .el-textarea__inner {
+  height: 100%;
+}
+
 /* 输入框边框 */
 .el-container >>> .el-input__inner,
 .el-container >>> .el-textarea__inner {
@@ -63,10 +68,6 @@ export default {
   padding-left: 0;
 }
 
-.el-main >>> .el-textarea,
-.el-main >>> .el-textarea__inner {
-  height: 100%;
-}
 /* 自定义title和content显示 */
 .el-main >>> .my-title,
 .el-main >>> .el-input--small .el-input__inner {

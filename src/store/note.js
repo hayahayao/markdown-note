@@ -1,5 +1,4 @@
 import db from '../modules/database'
-
 export default {
     namespaced: true,
     state() {
@@ -49,6 +48,12 @@ export default {
         tags(state, value) {
             state.tags = value
         },
+        addTag(state, value) {
+            state.tags.push(value)
+        },
+        removeTag(state, value) {
+            state.tags.splice(state.tags.findIndex(tag => tag.id === value.id), 1)
+        },
     },
     actions: {
         initNote({ commit }) {
@@ -65,11 +70,10 @@ export default {
             commit('notebook', note.notebook)
             commit('tags', note.tags)
         },
-        updateNote({ commit }, { title, content, notebook, tags }) {
+        updateNote({ commit }, { title, content, notebook }) {
             if (title !== undefined) commit('title', title)
             if (content !== undefined) commit('content', content)
             if (notebook !== undefined) commit('notebook', notebook)
-            if (tags !== undefined) commit('tags', tags)
         },
         clearNote({ commit }) {
             commit('id', null)
@@ -79,9 +83,25 @@ export default {
             commit('notebook', null)
             commit('tags', [])
         },
+        addTag({ commit }, { tag }) {
+            commit('addTag', tag)
+        },
+        removeTag({ commit }, { tag }) {
+            commit('removeTag', tag)
+        },
         async saveNote({ getters }) {
-            const oldNote = await db.read('notes', getters.id)
+            if (!await db.read('notes', getters.id)) {
+                await db.add('notes', {
+                    id: getters.id,
+                    created: getters.created,
+                    title: getters.title,
+                    content: getters.content,
+                    notebook: null,
+                    tags: [],
+                })
+            }
 
+            const oldNote = await db.read('notes', getters.id)
             // 删除oldNotebook中的notes信息
             const oldNotebook = oldNote.notebook
             if (oldNotebook) {
@@ -106,6 +126,8 @@ export default {
             // 新增tag（newTags中有而oldTags中没有）
             for (const tag of newTags) {
                 if (!oldTags.find(item => item.id === tag.id)) {
+                    // eslint-disable-next-line no-console
+                    console.log(tag.title)
                     let currentTag = await db.read('tags', tag.id)
                     currentTag.notes.push({
                         id: getters.id

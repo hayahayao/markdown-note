@@ -21,6 +21,11 @@
           <span>{{ scope.row.notebook ? scope.row.notebook.title : '' }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="标签">
+        <template slot-scope="scope">
+          <el-tag v-for="tag in scope.row.tags" :key="tag.id">{{ tag.title }}</el-tag>
+        </template>
+      </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
       <el-button type="danger" @click="handleDelete">删除</el-button>
@@ -70,3 +75,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+</style>
